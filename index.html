@@ -60,10 +60,8 @@ input{background:var(--card);border:1px solid var(--line);border-radius:8px;padd
     <div class="row">
       <input id="ans" type="text" inputmode="decimal" placeholder="Your answer" aria-label="Your answer">
       <button id="check">Check answer</button>
-      <button id="show">Show solution</button>
     </div>
     <div class="msg" id="msg" role="status"></div>
-    <div id="sol" hidden></div>
   </div>
 </section>
 </main>
@@ -162,11 +160,10 @@ $('start').addEventListener('click',()=>{
   const r=Math.floor(rnd()*IMAGE.length),c=Math.floor(rnd()*IMAGE[0].length);
   const key=KEYS[Math.floor(rnd()*KEYS.length)];
   const win=windowAt(IMAGE,r,c),sol=solve(key,win);
-  current={sol};
+  current={sol:{answer:sol.answer}};
   $('img').innerHTML='<table class="mat">'+IMAGE.map((row,i)=>'<tr>'+row.map((v,j)=>'<td class="'+(i==r&&j==c?'c':'')+'">'+v+'</td>').join('')+'</tr>').join('')+'</table>';
   $('desc').innerHTML='Apply the <b>'+FILTERS[key].name+'</b> filter to the pixel in <b>row '+(r+1)+', column '+(c+1)+'</b> (value '+IMAGE[r][c]+'). Use zero padding and round to the nearest whole number.';
-  $('task').hidden=false;$('sol').hidden=true;$('msg').textContent='';$('ans').value='';
-  $('sol').innerHTML='<h3>Solution</h3>'+sol.html;
+  $('task').hidden=false;$('msg').textContent='';$('ans').value='';
 });
 $('check').addEventListener('click',()=>{
   if(!current)return;
@@ -177,7 +174,6 @@ $('check').addEventListener('click',()=>{
   m.className='msg '+(ok?'ok':'no');
   m.textContent=ok?'Correct.':'Not quite. Check the window values, the kernel, and the padding zeros.';
 });
-$('show').addEventListener('click',()=>{if(current)$('sol').hidden=!$('sol').hidden});
 $('sid').addEventListener('keydown',e=>{if(e.key==='Enter')$('start').click()});
 </script>
 </body>
