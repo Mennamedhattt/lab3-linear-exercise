@@ -161,4 +161,49 @@ function buildPanel(id){
   const cfg=GROUPS[id],root=document.getElementById(id),$=s=>root.querySelector(s);
   root.innerHTML=
    '<section><h2>Worked examples</h2><p class="mute">'+cfg.intro+'</p><div class="row tabs"></div><div class="exout"></div></section>'
-  +'<section><h2>Your pixel</h2><p>Enter your student ID. You will always get the same pixel and filter
+  +'<section><h2>Your pixel</h2><p>Enter your student ID. You will always get the same pixel and filter for the same ID.</p>'
+  +'<div class="row"><input class="sid" placeholder="20231234" autocomplete="off" aria-label="Student ID"><button class="go start">Get my pixel</button></div>'
+  +'<div class="task" hidden><div class="mats"><div><p class="cap">Image (your pixel is highlighted)</p><div class="img"></div></div></div><p class="desc"></p>'
+  +'<div class="row"><input class="ans" type="text" inputmode="decimal" placeholder="Your answer" aria-label="Your answer"><button class="check">Check answer</button></div>'
+  +'<div class="msg" role="status"></div></div></section>';
+
+  const tabs=$('.tabs');
+  tabs.innerHTML=cfg.keys.map(k=>'<button data-k="'+k+'">'+FILTERS[k].name+'</button>').join('');
+  function showExample(key){
+    tabs.querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.k===key));
+    $('.exout').innerHTML='<h3>'+title(key,1)+' filter on the center pixel</h3>'+solve(key,windowAt(cfg.example,1,1),1).html;
+  }
+  tabs.addEventListener('click',e=>{if(e.target.dataset.k)showExample(e.target.dataset.k)});
+  showExample(cfg.keys[0]);
+
+  let answer=null;
+  $('.start').addEventListener('click',()=>{
+    const sid=$('.sid'),v=sid.value.trim().toLowerCase();
+    if(!v){sid.focus();sid.placeholder='Enter your ID first';return}
+    const rnd=rng(hash(id+':'+v)),lo=cfg.interior?1:0,img=cfg.image;
+    const r=lo+Math.floor(rnd()*(img.length-2*lo)),c=lo+Math.floor(rnd()*(img[0].length-2*lo));
+    const key=cfg.keys[Math.floor(rnd()*cfg.keys.length)],Q=Q_CHOICES[Math.floor(rnd()*Q_CHOICES.length)];
+    answer=solve(key,windowAt(img,r,c),Q).answer;
+    $('.img').innerHTML='<table class="mat">'+img.map((row,i)=>'<tr>'+row.map((x,j)=>'<td class="'+(i==r&&j==c?'c':'')+'">'+x+'</td>').join('')+'</tr>').join('')+'</table>';
+    $('.desc').innerHTML='Apply the <b>'+title(key,Q)+'</b> filter to the pixel in <b>row '+(r+1)+', column '+(c+1)+'</b> (value '+img[r][c]+'). '+cfg.rule;
+    $('.task').hidden=false;$('.msg').textContent='';$('.ans').value='';
+  });
+  $('.check').addEventListener('click',()=>{
+    if(answer===null)return;
+    const v=parseFloat($('.ans').value.replace(',','.')),m=$('.msg');
+    if(isNaN(v)){m.className='msg no';m.textContent='Enter a number first.';return}
+    const ok=Math.abs(v-answer)<=0.5;
+    m.className='msg '+(ok?'ok':'no');
+    m.textContent=ok?'Correct.':'Not quite. Check the window values and the formula.';
+  });
+  $('.sid').addEventListener('keydown',e=>{if(e.key==='Enter')$('.start').click()});
+}
+buildPanel('linear');buildPanel('nonlinear');
+document.getElementById('ptabs').addEventListener('click',e=>{
+  const id=e.target.dataset.p;if(!id)return;
+  document.querySelectorAll('#ptabs button').forEach(b=>b.setAttribute('aria-selected',b.dataset.p===id));
+  ['linear','nonlinear'].forEach(g=>document.getElementById(g).hidden=g!==id);
+});
+</script>
+</body>
+</html>
