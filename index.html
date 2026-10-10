@@ -34,6 +34,8 @@ input{background:var(--card);border:1px solid var(--line);border-radius:8px;padd
 .cap{font-size:14px;color:var(--mute);margin:0 0 2px}
 .calc{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0;overflow-x:auto;font-variant-numeric:tabular-nums}
 .ans{font-size:20px;font-weight:600;color:var(--acc)}
+.eq{font-size:18px;font-family:Georgia,"Times New Roman",serif;border-left:4px solid var(--acc)}
+.eqnote{font-size:13px;color:var(--mute);margin:-4px 0 8px}
 .msg{margin-top:8px;font-weight:600}
 .ok{color:var(--good)}.no{color:var(--bad)}
 </style>
@@ -95,6 +97,17 @@ const FILTERS={
     const a=Math.max(...v),b=Math.min(...v),r=(a+b)/2;
     return {v:r,lines:['Max = '+a+', Min = '+b,'Midpoint = ('+a+' + '+b+') ÷ 2 = '+r.toFixed(2)]};}}
 };
+const S='<sub>(s,t)∈S</sub>';
+const EQ={
+  harmonic:()=>'f̂(x,y) = mn ÷ Σ'+S+' [ 1 / g(s,t) ]',
+  contraharmonic:Q=>'f̂(x,y) = Σ'+S+' g(s,t)<sup>Q+1</sup> ÷ Σ'+S+' g(s,t)<sup>Q</sup> &nbsp;&nbsp;(here Q = '+Q+')',
+  geometric:()=>'f̂(x,y) = [ Π'+S+' g(s,t) ]<sup>1/mn</sup>',
+  median:()=>'f̂(x,y) = median'+S+' { g(s,t) }',
+  max:()=>'f̂(x,y) = max'+S+' { g(s,t) }',
+  min:()=>'f̂(x,y) = min'+S+' { g(s,t) }',
+  midpoint:()=>'f̂(x,y) = ½ [ max'+S+' { g(s,t) } + min'+S+' { g(s,t) } ]'
+};
+const EQ_NOTE='S = the 3×3 window around (x, y), g(s,t) = a pixel value in S, mn = 9 (number of pixels in S), f̂(x,y) = the filtered output.';
 const Q_CHOICES=[-2,1,2];
 const p=v=>v<0?'('+v+')':v;
 const title=(key,Q)=>FILTERS[key].name+(key==='contraharmonic'?' (Q = '+Q+')':'');
@@ -146,6 +159,7 @@ function solve(key,win,Q){
     }
   }else{
     html+='</div>';
+    html+='<div class="calc eq">'+EQ[key](Q)+'</div><p class="eqnote">'+EQ_NOTE+'</p>';
     const r=f.run(w.flat(),Q);
     answer=Math.round(r.v);
     html+=r.lines.map(l=>'<div class="calc">'+l+'</div>').join('');
