@@ -3,46 +3,47 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Image filters lab: linear and non-linear</title>
+<title>Image filters lab notebook</title>
 <style>
-:root{--bg:#f6f8fa;--card:#fff;--ink:#12263a;--mute:#5b6b7b;--line:#d5dde5;--acc:#0b6e69;--hl:#fde68a;--pad:#e6eaee;--bad:#b42318;--good:#146c43}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1720;--card:#17212c;--ink:#e6edf3;--mute:#9aa9b8;--line:#2b3a49;--acc:#5fd3cb;--hl:#7a5c00;--pad:#222e3a;--bad:#ff8b7e;--good:#6fdc9f}}
+:root{--paper:#fbf9f2;--ink:#1f2a37;--mute:#6b7280;--rule:#d6e4f0;--margin:#e7a3a3;--pen:#1d4ed8;--hl:#fff3a3;--pad:#ece9df;--bad:#b42318;--good:#146c43}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-main{max-width:860px;margin:0 auto;padding:24px 16px 64px}
-h1{font-size:30px;margin:8px 0 4px}
-h2{font-size:21px;margin:0 0 12px}
-h3{font-size:16px;margin:16px 0 6px}
-p{margin:0 0 10px}
+body{margin:0;color:var(--ink);font:17px/28px Georgia,"Times New Roman",serif;
+  background:var(--paper) repeating-linear-gradient(to bottom,transparent 0,transparent 27px,var(--rule) 27px,var(--rule) 28px)}
+main{max-width:800px;margin:0 auto;padding:28px 20px 64px 60px;border-left:2px solid var(--margin);min-height:100vh}
+h1{font-size:30px;line-height:40px;margin:0 0 0}
+h2{font-size:21px;line-height:28px;margin:28px 0 8px;border-bottom:2px solid var(--ink);display:inline-block}
+h3{font-size:17px;margin:14px 0 6px}
+p{margin:0 0 8px}
 .mute{color:var(--mute)}
-section{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin-top:20px}
 button,input{font:inherit;color:var(--ink)}
-button{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 14px;cursor:pointer}
-button:hover{border-color:var(--acc)}
-button.on,button.go{background:var(--acc);border-color:var(--acc);color:var(--card)}
-button:focus-visible,input:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-input{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:210px}
+button{background:none;border:1px solid var(--ink);border-radius:2px;padding:2px 12px;cursor:pointer}
+button:hover{background:var(--hl)}
+button.on,button.go{background:var(--hl);font-weight:bold}
+button:focus-visible,input:focus-visible{outline:2px solid var(--pen);outline-offset:2px}
+input{background:transparent;border:0;border-bottom:1px solid var(--ink);padding:0 4px;width:200px;font-family:"Courier New",monospace}
 .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-.ptabs{margin-top:16px;border-bottom:2px solid var(--line);gap:0}
-.ptabs button{border:0;border-bottom:3px solid transparent;border-radius:0;background:none;padding:10px 18px;font-weight:600;color:var(--mute);margin-bottom:-2px}
-.ptabs button[aria-selected=true]{color:var(--acc);border-bottom-color:var(--acc)}
-.mats{display:flex;flex-wrap:wrap;gap:24px;margin:8px 0}
-.mat{border-collapse:separate;border-spacing:3px}
-.mat td{width:48px;height:42px;text-align:center;background:var(--bg);border:1px solid var(--line);border-radius:4px;font-variant-numeric:tabular-nums}
+.ptabs{margin:8px 0 0;gap:18px}
+.ptabs button{border:0;border-bottom:3px solid transparent;border-radius:0;padding:0 2px;font-weight:bold;color:var(--mute)}
+.ptabs button:hover{background:none}
+.ptabs button[aria-selected=true]{color:var(--pen);border-bottom-color:var(--pen)}
+.tabs{margin:6px 0}
+.mats{display:flex;flex-wrap:wrap;gap:28px;margin:8px 0}
+.mat{border-collapse:collapse;background:var(--paper)}
+.mat td{width:46px;height:34px;line-height:1.2;text-align:center;border:1px solid var(--ink);font-family:"Courier New",monospace}
 .mat td.pad{background:var(--pad);color:var(--mute)}
-.mat td.c{background:var(--hl);font-weight:600;border-color:var(--ink)}
-.cap{font-size:14px;color:var(--mute);margin:0 0 2px}
-.calc{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:8px 0;overflow-x:auto;font-variant-numeric:tabular-nums}
-.ans{font-size:20px;font-weight:600;color:var(--acc)}
-.eq{font-size:18px;font-family:Georgia,"Times New Roman",serif;border-left:4px solid var(--acc)}
-.eqnote{font-size:13px;color:var(--mute);margin:-4px 0 8px}
-.msg{margin-top:8px;font-weight:600}
+.mat td.c{background:var(--hl);font-weight:bold}
+.cap{font-size:14px;line-height:20px;color:var(--mute);margin:0 0 2px}
+.calc{background:var(--paper);border-left:3px solid var(--rule);padding:2px 12px;margin:6px 0;overflow-x:auto;font-family:"Courier New",monospace;font-size:15px;line-height:24px}
+.eq{font-family:Georgia,serif;font-size:18px;font-style:italic;border-left-color:var(--pen)}
+.eqnote{font-size:13px;line-height:20px;color:var(--mute);margin:0 0 8px}
+.ans{font-weight:bold;color:var(--pen);font-size:20px}
+.msg{margin-top:8px;font-weight:bold}
 .ok{color:var(--good)}.no{color:var(--bad)}
 </style>
 </head>
 <body>
 <main>
-<h1>Image filters lab</h1>
+<h1>Image filters lab notebook</h1>
 <p class="mute">Worked examples, then one pixel to solve by hand.</p>
 <div class="row ptabs" role="tablist" id="ptabs">
   <button role="tab" aria-selected="true" data-p="linear">Linear filters</button>
