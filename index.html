@@ -164,7 +164,7 @@ function buildPanel(id){
   +'<section><h2>Your pixel</h2><p>Enter your student ID. You will always get the same pixel and filter for the same ID.</p>'
   +'<div class="row"><input class="sid" placeholder="20231234" autocomplete="off" aria-label="Student ID"><button class="go start">Get my pixel</button></div>'
   +'<div class="task" hidden><div class="mats"><div><p class="cap">Image (your pixel is highlighted)</p><div class="img"></div></div></div><p class="desc"></p>'
-  +'<div class="row"><input class="ans" type="text" inputmode="decimal" placeholder="Your answer" aria-label="Your answer"><button class="check">Check answer</button></div>'
+  +'<div class="row"><input class="user-answer" type="text" inputmode="decimal" placeholder="Your answer" aria-label="Your answer"><button class="check">Check answer</button></div>'
   +'<div class="msg" role="status"></div></div></section>';
 
   const tabs=$('.tabs');
@@ -186,16 +186,18 @@ function buildPanel(id){
     answer=solve(key,windowAt(img,r,c),Q).answer;
     $('.img').innerHTML='<table class="mat">'+img.map((row,i)=>'<tr>'+row.map((x,j)=>'<td class="'+(i==r&&j==c?'c':'')+'">'+x+'</td>').join('')+'</tr>').join('')+'</table>';
     $('.desc').innerHTML='Apply the <b>'+title(key,Q)+'</b> filter to the pixel in <b>row '+(r+1)+', column '+(c+1)+'</b> (value '+img[r][c]+'). '+cfg.rule;
-    $('.task').hidden=false;$('.msg').textContent='';$('.ans').value='';
+    $('.task').hidden=false;$('.msg').textContent='';$('.user-answer').value='';
   });
   $('.check').addEventListener('click',()=>{
+    const m=$('.msg');
     if(answer===null)return;
-    const v=parseFloat($('.ans').value.replace(',','.')),m=$('.msg');
+    const v=parseFloat($('.user-answer').value.replace(',','.'));
     if(isNaN(v)){m.className='msg no';m.textContent='Enter a number first.';return}
     const ok=Math.abs(v-answer)<=0.5;
     m.className='msg '+(ok?'ok':'no');
-    m.textContent=ok?'Correct.':'Not quite. Check the window values and the formula.';
+    m.textContent=ok?'Correct ✓':'Not quite ✗ Check the window values and the formula.';
   });
+  $('.user-answer').addEventListener('keydown',e=>{if(e.key==='Enter')$('.check').click()});
   $('.sid').addEventListener('keydown',e=>{if(e.key==='Enter')$('.start').click()});
 }
 buildPanel('linear');buildPanel('nonlinear');
